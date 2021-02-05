@@ -1,24 +1,32 @@
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import './App.css';
 function App({ slides, logoUrl }) {
   const [currentSlideIdx, setCurrentSlideIdx] = useState(0);
+  const timeoutRef = useRef(null);
 
-  const handleSlideTimeout = () => {
+  const handleSlideTimeout = useCallback(() => {
     if (currentSlideIdx < slides.length - 1) {
+      console.log('Pause recording from template');
       document.dispatchEvent(new Event('makePause'));
       setCurrentSlideIdx(currentSlideIdx + 1);
+      console.log('Resume recording from template');
       document.dispatchEvent(new Event('makeResume'));
-      setTimeout(handleSlideTimeout, slides[currentSlideIdx + 1].seconds * 1000);
     } else {
       document.dispatchEvent(new Event('makeStop'));
+      console.log('Stop recording from template');
     }
-  };
+  }, [currentSlideIdx, slides]);
 
   useEffect(() => {
+    console.log('Start recording from template');
     document.dispatchEvent(new Event('makeStart'));
-    setTimeout(handleSlideTimeout, slides[0].seconds * 1000);
-  });
+  }, []);
+
+  useEffect(() => {
+    clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(handleSlideTimeout, slides[currentSlideIdx].seconds * 1000);
+  }, [currentSlideIdx, handleSlideTimeout, slides]);
 
   return (
     <div className="App">
