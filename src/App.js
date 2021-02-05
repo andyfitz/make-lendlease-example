@@ -8,19 +8,15 @@ function App({ slides, logoUrl }) {
   const handleSlideTimeout = useCallback(() => {
     if (currentSlideIdx < slides.length - 1) {
       console.log('Pause recording from template');
-      document.dispatchEvent(new Event('makePause'));
       setCurrentSlideIdx(currentSlideIdx + 1);
       console.log('Resume recording from template');
-      document.dispatchEvent(new Event('makeResume'));
     } else {
-      document.dispatchEvent(new Event('makeStop'));
       console.log('Stop recording from template');
     }
   }, [currentSlideIdx, slides]);
 
   useEffect(() => {
     console.log('Start recording from template');
-    document.dispatchEvent(new Event('makeStart'));
   }, []);
 
   useEffect(() => {
